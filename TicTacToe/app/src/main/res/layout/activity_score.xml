@@ -1,8 +1,8 @@
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp"
-    android:stretchColumns="1"
     android:background="@color/beige">
 
     <!-- Title Row -->
@@ -15,23 +15,38 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/blue"
             android:padding="8dp"
             android:text="Players Score"
-            android:textColor="@color/black"
-            android:textSize="24sp"
+            android:textColor="#152C3C"
+            android:textSize="34sp"
             android:textStyle="bold" />
     </TableRow>
 
-    <!-- Table Headers Row -->
+    <!-- Table Headers and Scores -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:contentDescription="scroll table"
+        android:paddingTop="8dp">
 
-    <!-- Dynamic Content Table Rows will be added dynamically here -->
-    <TableLayout
-        android:id="@+id/scoreTable"
+        <TableLayout
+            android:id="@+id/scoreTable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!-- Dynamic rows for player scores will go here -->
+        </TableLayout>
+    </ScrollView>
+
+    <!-- Reset Button -->
+    <Button
+        android:id="@+id/resetScoresButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp">
-        <!-- Dynamic rows for player scores will go here -->
-    </TableLayout>
-
-</TableLayout>
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/red"
+        android:text="Reset Scores"
+        android:textColor="@color/beige"
+        android:textStyle="bold"
+        android:padding="12dp" />
+</LinearLayout>

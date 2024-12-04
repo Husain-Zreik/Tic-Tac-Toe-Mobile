@@ -54,4 +54,13 @@ public class PlayerNameActivity extends AppCompatActivity {
             startActivity(intent);
         });
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Clear the input fields when the activity is stopped
+        playerOneEditText.setText("");
+        playerTwoEditText.setText("");
+    }
+
 }

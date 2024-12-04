@@ -32,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Handle exit button click
         exitButton.setOnClickListener(v -> {
-            finish(); // This will close the application
+            finishAffinity(); // Finish all activities in the task
+            System.exit(0);   // Close the app process
         });
 
         scoreButton.setOnClickListener(v -> {
