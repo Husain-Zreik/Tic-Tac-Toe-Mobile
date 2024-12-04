@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="20dp"
+    android:animateLayoutChanges="true"
+    android:fitsSystemWindows="true"
+    android:background="#C7FDF6E7">
+
+    <!-- Score TextView at the Top -->
+    <TextView
+        android:id="@+id/scoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Player 1: 0 | Player 2: 0"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Tic Tac Toe Grid -->
+    <GridLayout
+        android:id="@+id/gameGrid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/scoreTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:layout_marginTop="30dp"
+        android:columnCount="3"
+        android:padding="10dp"
+        android:rowCount="3">
+
+        <Button
+            android:id="@+id/button_00"
+            android:layout_width="100dp"
+            android:layout_height="105dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="#152C3C"
+            android:contentDescription="Top-left button"
+            android:textSize="32sp"
+            app:cornerRadius="8dp"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="3dp" />
+
+        <Button
+            android:id="@+id/button_01"
+            android:layout_width="100dp"
+            android:layout_height="105dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="#152C3C"
+            android:contentDescription="Top-center button"
+            android:textSize="32sp"
+            app:cornerRadius="8dp"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="3dp" />
+
+        <Button
+            android:id="@+id/button_02"
+            android:layout_width="100dp"
+            android:layout_height="105dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="#152C3C"
+            android:contentDescription="Top-right button"
+            android:textSize="32sp"
+            app:cornerRadius="8dp"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="3dp" />
+
+        <Button
+            android:id="@+id/button_10"
+            android:layout_width="100dp"
+            android:layout_height="105dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="#152C3C"
+            android:contentDescription="Middle-left button"
+            android:textSize="32sp"
+            app:cornerRadius="8dp"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="3dp" />
+
+        <Button
+            android:id="@+id/button_11"
+            android:layout_width="100dp"
+            android:layout_height="105dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="#152C3C"
+            android:contentDescription="Center button"
+            android:textSize="32sp"
+            app:cornerRadius="8dp"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="3dp" />
+
+        <Button
+            android:id="@+id/button_12"
+            android:layout_width="100dp"
+            android:layout_height="105dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="#152C3C"
+            android:contentDescription="Middle-right button"
+            android:textSize="32sp"
+            app:cornerRadius="8dp"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="3dp" />
+
+        <Button
+            android:id="@+id/button_20"
+            android:layout_width="100dp"
+            android:layout_height="105dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="#152C3C"
+            android:contentDescription="Bottom-left button"
+            android:textSize="32sp"
+            app:cornerRadius="8dp"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="3dp" />
+
+        <Button
+            android:id="@+id/button_21"
+            android:layout_width="100dp"
+            android:layout_height="105dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="#152C3C"
+            android:contentDescription="Bottom-center button"
+            android:textSize="32sp"
+            app:cornerRadius="8dp"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="3dp" />
+
+        <Button
+            android:id="@+id/button_22"
+            android:layout_width="100dp"
+            android:layout_height="105dp"
+            android:layout_margin="4dp"
+            android:backgroundTint="#152C3C"
+            android:contentDescription="Bottom-right button"
+            android:textSize="32sp"
+            app:cornerRadius="8dp"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="3dp" />
+    </GridLayout>
+
+    <!-- Current Player TextView -->
+    <TextView
+        android:id="@+id/currentPlayerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gameGrid"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Current Turn: Player 1"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <!-- Restart and Score Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <Button
+            android:id="@+id/restartButton"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="#152C3C"
+            android:padding="8dp"
+            android:text="Restart"
+            android:textColor="#FFFFFF"
+            app:strokeColor="#D4AF37"
+            app:strokeWidth="2dp" />
+
+        <Button
+            android:id="@+id/exitButton"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="#E20F0B"
+            android:padding="8dp"
+            android:text="Exit"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+</RelativeLayout>

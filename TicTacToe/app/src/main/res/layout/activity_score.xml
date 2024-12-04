@@ -1,0 +1,37 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:stretchColumns="1"
+    android:background="@color/beige">
+
+    <!-- Title Row -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/blue"
+            android:padding="8dp"
+            android:text="Players Score"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <!-- Table Headers Row -->
+
+    <!-- Dynamic Content Table Rows will be added dynamically here -->
+    <TableLayout
+        android:id="@+id/scoreTable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp">
+        <!-- Dynamic rows for player scores will go here -->
+    </TableLayout>
+
+</TableLayout>
