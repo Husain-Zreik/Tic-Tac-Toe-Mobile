@@ -54,17 +54,26 @@ public class PlayerNameActivity extends AppCompatActivity {
                 return;
             }
 
-            // Insert players into the database
-            User playerOne = new User(playerOneName, false); // Assuming false for isBot (human player)
-            User playerTwo = new User(playerTwoName, false); // Assuming false for isBot (human player)
+            if (playerOneName.equals(playerTwoName)) {
+                Toast.makeText(this, "Player 1 and Player 2 must have different names", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-            // Insert the users into the database
+            // Insert or retrieve users in a background thread
             new Thread(() -> {
-                userRepository.insert(playerOne);
-                userRepository.insert(playerTwo);
-            }).start();
+                int playerOneId = userRepository.insertOrGetUser(new User(playerOneName, false));
+                int playerTwoId = userRepository.insertOrGetUser(new User(playerTwoName, false));
 
-            // Proceed to GameActivity
+                // Proceed to GameActivity with user IDs
+                Intent intent = new Intent(PlayerNameActivity.this, GameActivity.class);
+                intent.putExtra("PLAYER_ONE_ID", playerOneId);
+                intent.putExtra("PLAYER_TWO_ID", playerTwoId);
+                intent.putExtra("PLAYER_ONE", playerOneName);
+                intent.putExtra("PLAYER_TWO", playerTwoName);
+                startActivity(intent);
+            }).start();
+      
+        // Proceed to GameActivity
             Intent intent = new Intent(PlayerNameActivity.this, GameActivity.class);
             intent.putExtra("PLAYER_ONE", playerOneName);
             intent.putExtra("PLAYER_TWO", playerTwoName);

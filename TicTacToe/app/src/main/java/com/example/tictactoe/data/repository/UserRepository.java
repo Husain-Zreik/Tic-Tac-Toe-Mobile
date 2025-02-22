@@ -16,8 +16,13 @@ public class UserRepository {
         userDao = db.userDao();
     }
 
-    public void insert(User user) {
-        userDao.insert(user);
+    public int insertOrGetUser(User user) {
+        User existingUser = userDao.getUserByUsername(user.getUsername());
+        if (existingUser == null) {
+            userDao.insert(user);
+            existingUser = userDao.getUserByUsername(user.getUsername());
+        }
+        return existingUser.getId();
     }
 
     public User getUserByUsername(String username) {
