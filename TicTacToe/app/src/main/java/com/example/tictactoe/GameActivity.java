@@ -1,37 +1,48 @@
 package com.example.tictactoe;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.example.tictactoe.data.local.database.entities.Game;
+import com.example.tictactoe.data.local.database.entities.Score;
+import com.example.tictactoe.data.local.database.entities.User;
+import com.example.tictactoe.data.repository.GameRepository;
+import com.example.tictactoe.data.repository.ScoreRepository;
+
 public class GameActivity extends AppCompatActivity {
     private TextView currentPlayerTextView, scoreTextView;
     private Button[][] buttons = new Button[3][3];
     private boolean playerOneTurn = true;
     private int roundCount = 0;
 
+    private Game currentGame;
     private int playerOneScore = 0;
     private int playerTwoScore = 0;
+
+    private Score score1;
+    private Score score2;
     private String playerOneName, playerTwoName;
+    private int playerOneID, playerTwoID;
+    private ScoreRepository scoreRepository;
+
+    private GameRepository gameRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        // Initialize repositories
+        gameRepository = new GameRepository(this);
+        scoreRepository = new ScoreRepository(this);
 
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -39,7 +50,10 @@ public class GameActivity extends AppCompatActivity {
 
         // Retrieve player names from intent
         playerOneName = getIntent().getStringExtra("PLAYER_ONE");
+        playerOneID = getIntent().getIntExtra("PLAYER_ONE_ID",0);
+
         playerTwoName = getIntent().getStringExtra("PLAYER_TWO");
+        playerTwoID = getIntent().getIntExtra("PLAYER_TWO_ID",0);
 
         // Initialize UI components
         currentPlayerTextView = findViewById(R.id.currentPlayerTextView);
@@ -49,6 +63,7 @@ public class GameActivity extends AppCompatActivity {
 
         // Initialize the Tic Tac Toe board
         initializeBoard();
+        insertInitialPlayers();
 
         // Set initial UI
         updatePlayerTurn();
@@ -63,7 +78,103 @@ public class GameActivity extends AppCompatActivity {
             finish();
         });
     }
+    private void insertInitialPlayers() {
+        new Thread(() -> {
+            try {
+                Log.d("GameActivity", "Inserted players ID: " + playerOneID +" "+ playerTwoID); // Log gameId
+                // Insert the game and get the generated game ID
+                gameRepository.insert(new Game(playerOneID, playerTwoID));
+                currentGame = gameRepository.getGameByPlayers(playerOneID, playerTwoID);
+                int gameId = currentGame.getId();
+                Log.d("GameActivity", "Inserted Game ID: " + gameId); // Log gameId
 
+                // Insert initial scores for both players with the game ID
+                score1 = new Score(playerOneID, (int) gameId, 0, "draw");
+                score2 = new Score(playerTwoID, (int) gameId, 0, "draw");
+
+                scoreRepository.insertScore(score1);
+                scoreRepository.insertScore(score2);
+
+                score1 = scoreRepository.getScoreByUserIdAndGameId(playerOneID,gameId);
+                score2 = scoreRepository.getScoreByUserIdAndGameId(playerTwoID,gameId);
+
+                Log.d("GameActivity", "Inserting Score for Player 1: " + score1); // Log Player 1 score
+                Log.d("GameActivity", "Inserting Score for Player 2: " + score2); // Log Player 2 score
+
+            } catch (Exception e) {
+                Log.e("GameActivity", "Database insert failed", e); // Log any exception
+            }
+        }).start();
+    }
+
+    private void updateGameWinner() {
+        new Thread(() -> {
+            try {
+                if (currentGame != null) {
+                    if (playerOneScore > playerTwoScore) {
+                        currentGame.setWinner(playerOneID);
+                        if (score1 != null && score2 != null) {
+                            score1.setResult("win");
+                            score2.setResult("loss");
+                        } else {
+                            Log.e("updateGameWinner", "One of the score objects is null.");
+                        }
+                    } else if (playerOneScore < playerTwoScore) {
+                        currentGame.setWinner(playerTwoID);
+                        if (score1 != null && score2 != null) {
+                            score2.setResult("win");
+                            score1.setResult("loss");
+                        } else {
+                            Log.e("updateGameWinner", "One of the score objects is null.");
+                        }
+                    } else {
+                        currentGame.setWinner(null);
+                        if (score1 != null && score2 != null) {
+                            score1.setResult("draw");
+                            score2.setResult("draw");
+                        } else {
+                            Log.e("updateGameWinner", "One of the score objects is null.");
+                        }
+                    }
+
+                    if (score1 != null) {
+                        scoreRepository.updateScore(score1);
+                    } else {
+                        Log.e("updateGameWinner", "score1 is null. Cannot update score.");
+                    }
+
+                    if (score2 != null) {
+                        scoreRepository.updateScore(score2);
+                    } else {
+                        Log.e("updateGameWinner", "score2 is null. Cannot update score.");
+                    }
+
+                    gameRepository.updateGame(currentGame);
+                } else {
+                    Log.e("updateGameWinner", "currentGame is null. Cannot update game winner.");
+                }
+            } catch (Exception e) {
+                Log.e("updateGameWinner", "An error occurred while updating the game winner.", e);
+            }
+        }).start();
+    }
+
+
+    private void updatePlayerScore(Score score, int scoreValue) {
+        new Thread(() -> {
+            try {
+                if (score != null) {
+                    Log.e("updatePlayerScore", "Score object is not null. score Id : "+score.getId()+"old score:"+ score.getScore()+" new value"+scoreValue);
+                    score.setScore(scoreValue);
+                    scoreRepository.updateScore(score);
+                } else {
+                    Log.e("updatePlayerScore", "Score object is null. Cannot update score.");
+                }
+            } catch (Exception e) {
+                Log.e("updatePlayerScore", "An error occurred while updating the score.", e);
+            }
+        }).start();
+    }
     private void initializeBoard() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -78,7 +189,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void onCellClick(Button button) {
-        if (!button.getText().toString().equals("")) {
+        if (!button.getText().toString().isEmpty()) {
             return;
         }
 
@@ -91,19 +202,20 @@ public class GameActivity extends AppCompatActivity {
         }
 
         roundCount++;
+        // Switch turns
+        playerOneTurn = !playerOneTurn;
+        updatePlayerTurn();
 
         if (checkForWinner()) {
+            updateGameWinner();
             if (playerOneTurn) {
                 playerOneWins();
             } else {
                 playerTwoWins();
             }
         } else if (roundCount == 9) {
+            updateGameWinner();
             draw();
-        } else {
-            // Switch turns
-            playerOneTurn = !playerOneTurn;
-            updatePlayerTurn();
         }
     }
 
@@ -118,19 +230,19 @@ public class GameActivity extends AppCompatActivity {
 
         for (int i = 0; i < 3; i++) {
             // Rows
-            if (board[i][0].equals(board[i][1]) && board[i][0].equals(board[i][2]) && !board[i][0].equals("")) {
+            if (board[i][0].equals(board[i][1]) && board[i][0].equals(board[i][2]) && !board[i][0].isEmpty()) {
                 return true;
             }
             // Columns
-            if (board[0][i].equals(board[1][i]) && board[0][i].equals(board[2][i]) && !board[0][i].equals("")) {
+            if (board[0][i].equals(board[1][i]) && board[0][i].equals(board[2][i]) && !board[0][i].isEmpty()) {
                 return true;
             }
         }
         // Diagonals
-        if (board[0][0].equals(board[1][1]) && board[0][0].equals(board[2][2]) && !board[0][0].equals("")) {
+        if (board[0][0].equals(board[1][1]) && board[0][0].equals(board[2][2]) && !board[0][0].isEmpty()) {
             return true;
         }
-        if (board[0][2].equals(board[1][1]) && board[0][2].equals(board[2][0]) && !board[0][2].equals("")) {
+        if (board[0][2].equals(board[1][1]) && board[0][2].equals(board[2][0]) && !board[0][2].isEmpty()) {
             return true;
         }
 
@@ -139,6 +251,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void playerOneWins() {
         playerOneScore++;
+        updatePlayerScore(score1,playerOneScore);
         savePlayerScore(playerOneName, playerOneScore); // Save the updated score
         showWinner(playerOneName + " wins!");
         resetBoard();
@@ -146,6 +259,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void playerTwoWins() {
         playerTwoScore++;
+        updatePlayerScore(score2,playerTwoScore);
         savePlayerScore(playerTwoName, playerTwoScore); // Save the updated score
         showWinner(playerTwoName + " wins!");
         resetBoard();

@@ -17,14 +17,23 @@ public class ScoreRepository {
         scoreDao = db.scoreDao();
     }
 
+    // Insert a new score
     public void insertScore(Score score) {
         scoreDao.insert(score);
     }
-    public List<Score> getScoresByGameId(int gameId) {
-        return scoreDao.getScoresByGameId(gameId);
+
+    // Update an existing score
+    public void updateScore(Score score) {
+        scoreDao.update(score);
     }
 
-    public List<Score> getScoresByUserId(int userId) {
-        return scoreDao.getScoresByUserId(userId);
+    // Delete a score
+    public void deleteScore(Score score) {
+        scoreDao.delete(score);
+    }
+
+    // Get score by user ID and game ID
+    public Score getScoreByUserIdAndGameId(int userId, int gameId) {
+        return scoreDao.getScoreByUserIdAndGameId(userId, gameId);
     }
 }

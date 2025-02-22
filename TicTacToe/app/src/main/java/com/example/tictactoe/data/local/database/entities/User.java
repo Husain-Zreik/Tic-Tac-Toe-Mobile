@@ -24,7 +24,6 @@ public class User {
     @ColumnInfo(name = "total_draws")
     private int totalDraws;
 
-    // Constructor, getters, and setters
     public User(String username, boolean isBot) {
         this.username = username;
         this.isBot = isBot;

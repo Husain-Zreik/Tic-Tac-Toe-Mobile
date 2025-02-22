@@ -1,17 +1,17 @@
 package com.example.tictactoe.data.local.database.entities;
-
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
-
 @Entity(tableName = "games",
         foreignKeys = {
                 @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "p1FK"),
                 @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "p2FK"),
-                @ForeignKey(entity = Score.class, parentColumns = "id", childColumns = "S1FK"),
-                @ForeignKey(entity = Score.class, parentColumns = "id", childColumns = "S2FK")
-        })
+                @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "winner", onDelete = ForeignKey.SET_NULL) // Allowing null for winner on delete
+        },
+        indices = {@Index("p1FK"), @Index("p2FK"), @Index("winner")}
+)
 public class Game {
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -22,22 +22,17 @@ public class Game {
     @ColumnInfo(name = "p2FK")
     private int p2FK;
 
-    @ColumnInfo(name = "S1FK")
-    private int S1FK;
-
-    @ColumnInfo(name = "S2FK")
-    private int S2FK;
+    @ColumnInfo(name = "winner")
+    private Integer winner; // Allowing null for winner (nullable)
 
     @ColumnInfo(name = "date")
-    private long date; // Timestamp of when the game was played
+    private long date;
 
-    // Constructor, getters, and setters
-    public Game(int p1FK, int p2FK, int S1FK, int S2FK, long date) {
+    public Game(int p1FK, int p2FK) {
         this.p1FK = p1FK;
         this.p2FK = p2FK;
-        this.S1FK = S1FK;
-        this.S2FK = S2FK;
-        this.date = date;
+        this.winner = null; // Winner is null initially (for a draw or pending result)
+        this.date = System.currentTimeMillis();
     }
 
     // Getters and Setters
@@ -50,11 +45,8 @@ public class Game {
     public int getP2FK() { return p2FK; }
     public void setP2FK(int p2FK) { this.p2FK = p2FK; }
 
-    public int getS1FK() { return S1FK; }
-    public void setS1FK(int S1FK) { this.S1FK = S1FK; }
-
-    public int getS2FK() { return S2FK; }
-    public void setS2FK(int S2FK) { this.S2FK = S2FK; }
+    public Integer getWinner() { return winner; } // Get winner (nullable)
+    public void setWinner(Integer winner) { this.winner = winner; }
 
     public long getDate() { return date; }
     public void setDate(long date) { this.date = date; }

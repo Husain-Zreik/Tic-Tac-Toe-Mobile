@@ -72,12 +72,7 @@ public class PlayerNameActivity extends AppCompatActivity {
                 intent.putExtra("PLAYER_TWO", playerTwoName);
                 startActivity(intent);
             }).start();
-      
-        // Proceed to GameActivity
-            Intent intent = new Intent(PlayerNameActivity.this, GameActivity.class);
-            intent.putExtra("PLAYER_ONE", playerOneName);
-            intent.putExtra("PLAYER_TWO", playerTwoName);
-            startActivity(intent);
+
         });
     }
 

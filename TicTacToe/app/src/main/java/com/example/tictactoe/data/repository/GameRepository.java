@@ -20,7 +20,23 @@ public class GameRepository {
         gameDao.insert(game);
     }
 
+    public void updateGame(Game game) {
+        gameDao.update(game);
+    }
+
     public List<Game> getGamesByUserId(int userId) {
         return gameDao.getGamesByUserId(userId);
     }
+
+    public Game getGameByPlayers(int playerOneId, int playerTwoId) {
+        Game game = gameDao.getGameByPlayers(playerOneId, playerTwoId);
+        return game;
+    }
+//    public int getGameIdByPlayers(int playerOneId, int playerTwoId) {
+//        Game game = gameDao.getGameByPlayers(playerOneId, playerTwoId);
+//        if (game != null) {
+//            return game.getId(); // Return the ID of the found game
+//        }
+//        return -1; // Return -1 if no game was found
+//    }
 }

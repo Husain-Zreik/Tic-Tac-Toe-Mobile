@@ -2,14 +2,16 @@ package com.example.tictactoe.data.local.database.entities;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
-
 @Entity(tableName = "scores",
         foreignKeys = {
-                @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "usernameFK"),
-                @ForeignKey(entity = Game.class, parentColumns = "id", childColumns = "gameFK")
-        })
+                @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "usernameFK", onDelete = ForeignKey.CASCADE),
+                @ForeignKey(entity = Game.class, parentColumns = "id", childColumns = "gameFK", onDelete = ForeignKey.CASCADE)
+        },
+        indices = {@Index("usernameFK"), @Index("gameFK")}
+)
 public class Score {
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -26,7 +28,7 @@ public class Score {
     @ColumnInfo(name = "result")
     private String result; // "win", "loss", "draw"
 
-    // Constructor, getters, and setters
+    // Constructor
     public Score(int usernameFK, int gameFK, int score, String result) {
         this.usernameFK = usernameFK;
         this.gameFK = gameFK;
