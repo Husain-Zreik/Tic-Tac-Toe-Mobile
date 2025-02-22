@@ -12,15 +12,22 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.tictactoe.data.local.database.entities.User;
+import com.example.tictactoe.data.repository.UserRepository;
+
 public class PlayerNameActivity extends AppCompatActivity {
     private EditText playerOneEditText, playerTwoEditText;
     private Button startGameButton;
+    private UserRepository userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_player_name);
+
+        // Initialize the UserRepository
+        userRepository = new UserRepository(this);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -47,6 +54,16 @@ public class PlayerNameActivity extends AppCompatActivity {
                 return;
             }
 
+            // Insert players into the database
+            User playerOne = new User(playerOneName, false); // Assuming false for isBot (human player)
+            User playerTwo = new User(playerTwoName, false); // Assuming false for isBot (human player)
+
+            // Insert the users into the database
+            new Thread(() -> {
+                userRepository.insert(playerOne);
+                userRepository.insert(playerTwo);
+            }).start();
+
             // Proceed to GameActivity
             Intent intent = new Intent(PlayerNameActivity.this, GameActivity.class);
             intent.putExtra("PLAYER_ONE", playerOneName);
@@ -62,5 +79,4 @@ public class PlayerNameActivity extends AppCompatActivity {
         playerOneEditText.setText("");
         playerTwoEditText.setText("");
     }
-
 }
