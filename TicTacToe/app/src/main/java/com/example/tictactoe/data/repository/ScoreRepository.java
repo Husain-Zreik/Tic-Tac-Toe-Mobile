@@ -36,4 +36,14 @@ public class ScoreRepository {
     public Score getScoreByUserIdAndGameId(int userId, int gameId) {
         return scoreDao.getScoreByUserIdAndGameId(userId, gameId);
     }
+
+    // Get all scores from database
+    public List<Score> getAllScores() {
+        return scoreDao.getAllScores();
+    }
+
+    // Delete all scores
+    public void deleteAllScores() {
+        new Thread(scoreDao::deleteAllScores).start();
+    }
 }

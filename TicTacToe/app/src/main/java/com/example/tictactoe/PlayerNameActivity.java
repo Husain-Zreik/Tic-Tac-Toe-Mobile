@@ -61,8 +61,8 @@ public class PlayerNameActivity extends AppCompatActivity {
 
             // Insert or retrieve users in a background thread
             new Thread(() -> {
-                int playerOneId = userRepository.insertOrGetUser(new User(playerOneName, false));
-                int playerTwoId = userRepository.insertOrGetUser(new User(playerTwoName, false));
+                int playerOneId = userRepository.insertOrGetUser(new User(playerOneName));
+                int playerTwoId = userRepository.insertOrGetUser(new User(playerTwoName));
 
                 // Proceed to GameActivity with user IDs
                 Intent intent = new Intent(PlayerNameActivity.this, GameActivity.class);

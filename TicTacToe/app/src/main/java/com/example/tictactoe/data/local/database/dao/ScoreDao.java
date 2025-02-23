@@ -32,11 +32,9 @@ public interface ScoreDao {
     @Query("SELECT * FROM scores WHERE usernameFK = :userId AND gameFK = :gameId LIMIT 1")
     Score getScoreByUserIdAndGameId(int userId, int gameId);
 
-    // Get score by game ID
-    @Query("SELECT * FROM scores WHERE gameFK = :gameId")
-    List<Score> getScoresByGameId(int gameId);
+    @Query("SELECT * FROM scores ORDER BY score DESC") // Sort scores in descending order
+    List<Score> getAllScores();
 
-    // Get score by user ID and score ID
-    @Query("SELECT * FROM scores WHERE usernameFK = :userId AND id = :scoreId")
-    Score getScoreByUserIdAndScoreId(int userId, int scoreId);
+    @Query("DELETE FROM scores")
+    void deleteAllScores();
 }

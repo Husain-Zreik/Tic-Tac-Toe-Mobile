@@ -24,6 +24,17 @@ public interface UserDao {
     @Query("SELECT * FROM users WHERE username = :username LIMIT 1")
     User getUserByUsername(String username);
 
+    @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
+    User getUserByUserId(int userId);
+
     @Query("SELECT * FROM users")
     List<User> getAllUsers();
+
+    // Update total score for a specific user
+    @Query("UPDATE users SET total_score = :totalScore WHERE id = :userId")
+    void updateTotalScore(int userId, int totalScore);
+
+    // Reset total scores for all users
+    @Query("UPDATE users SET total_score = 0")
+    void resetTotalScores();
 }

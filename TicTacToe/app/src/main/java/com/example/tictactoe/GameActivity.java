@@ -16,6 +16,7 @@ import com.example.tictactoe.data.local.database.entities.Score;
 import com.example.tictactoe.data.local.database.entities.User;
 import com.example.tictactoe.data.repository.GameRepository;
 import com.example.tictactoe.data.repository.ScoreRepository;
+import com.example.tictactoe.data.repository.UserRepository;
 
 public class GameActivity extends AppCompatActivity {
     private TextView currentPlayerTextView, scoreTextView;
@@ -33,6 +34,8 @@ public class GameActivity extends AppCompatActivity {
     private int playerOneID, playerTwoID;
     private ScoreRepository scoreRepository;
 
+    private UserRepository userRepository;
+
     private GameRepository gameRepository;
 
     @Override
@@ -43,6 +46,7 @@ public class GameActivity extends AppCompatActivity {
         // Initialize repositories
         gameRepository = new GameRepository(this);
         scoreRepository = new ScoreRepository(this);
+        userRepository = new UserRepository(this);
 
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -160,21 +164,34 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    private void updatePlayerScore(Score score, int scoreValue) {
+    private void updatePlayerScore(Score score, int scoreValue, int user) {
         new Thread(() -> {
             try {
                 if (score != null) {
-                    Log.e("updatePlayerScore", "Score object is not null. score Id : "+score.getId()+"old score:"+ score.getScore()+" new value"+scoreValue);
+                    Log.e("updatePlayerScore", "Score object is not null. score Id: " + score.getId() + " old score: " + score.getScore() + " new value: " + scoreValue);
                     score.setScore(scoreValue);
                     scoreRepository.updateScore(score);
+
+                    // Log before fetching the current user
+                    Log.e("updatePlayerScore", "Fetching current user with userId: " + user);
+                    User currentUser = userRepository.getUserByUserId(user);
+
+                    if (currentUser != null) {
+                        Log.e("updatePlayerScore", "User found. Current total score: " + currentUser.getTotalScore());
+                        userRepository.updateTotalScore(user, currentUser.getTotalScore() + 1);
+                        Log.e("updatePlayerScore", "Total score updated for userId: " + user + " new total: " + (currentUser.getTotalScore() + scoreValue));
+                    } else {
+                        Log.e("updatePlayerScore", "User not found for userId: " + user);
+                    }
                 } else {
                     Log.e("updatePlayerScore", "Score object is null. Cannot update score.");
                 }
             } catch (Exception e) {
-                Log.e("updatePlayerScore", "An error occurred while updating the score.", e);
+                Log.e("updatePlayerScore", "An error occurred while updating the score. Error: ", e);
             }
         }).start();
     }
+
     private void initializeBoard() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -251,7 +268,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void playerOneWins() {
         playerOneScore++;
-        updatePlayerScore(score1,playerOneScore);
+        updatePlayerScore(score1,playerOneScore,playerOneID);
         savePlayerScore(playerOneName, playerOneScore); // Save the updated score
         showWinner(playerOneName + " wins!");
         resetBoard();
@@ -259,7 +276,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void playerTwoWins() {
         playerTwoScore++;
-        updatePlayerScore(score2,playerTwoScore);
+        updatePlayerScore(score2,playerTwoScore,playerTwoID);
         savePlayerScore(playerTwoName, playerTwoScore); // Save the updated score
         showWinner(playerTwoName + " wins!");
         resetBoard();
